@@ -4,19 +4,33 @@ from rich.panel import Panel
 
 class Churrasco:
     # atributos de classe
-    consumo_padrao = 0.400
-    preço_kg = 82.40
+    consumo_padrao:float = 0.400
+    preço_kg:float = 82.40
 
     def __init__(self, titulo, quantidade=0):
         self.titulo = titulo
         self.quantidade = quantidade
 
-    def analisar(self):
-        qtd_carne = self.quantidade * self.consumo_padrao
-        custo_pessoa = (qtd_carne * self.preço_kg) / self.quantidade
-        custo_total = qtd_carne * self.preço_kg
+    def __str__(self):
+        return f"Esse é o {self.titulo} com {self.quantidade} pessoas participando."
 
-        return Panel(f"Analisando [green]{self.titulo}[/] com [cyan]{self.quantidade}[/] convidados.\nCada participante comerá {self.consumo_padrao}KG e cada KG custa R${self.preço_kg:.2f}.\nRecomendo comprar [blue]{qtd_carne:.2f}KG[/] de carne.\nO custo total será de [green]R${custo_total:.2f}[/]\nCada participante irá pagar [green]R${custo_pessoa}[/] para participar.", title=f"{self.titulo}", expand=False)
+    def calcular_qtd_carne(self) -> float:
+        return self.quantidade * self.__class__.consumo_padrao
+
+    def calcular_custo_total(self) -> float:
+        return self.calcular_qtd_carne() * self.__class__.preço_kg
+
+    def calcular_custo_pessoa(self) -> float:
+        return self.calcular_custo_total() / self.quantidade
+    
+    def analisar(self):
+        conteudo = f"Analisando o [blue]{self.titulo}[/] com [cyan]{self.quantidade}[/] convidados."
+        conteudo += f"\nCada participante comerá {self.__class__.consumo_padrao}KG e cada KG custa R${self.__class__.preço_kg:,.2f}."
+        conteudo += f"\nRecomendo comprar [purple]{self.calcular_qtd_carne():.2f}KG[/] de carne."
+        conteudo += f"\nO custo total será de [green]R${self.calcular_custo_total():.2f}[/]."
+        conteudo += f"\nCada convidade vai pagar [green]R${self.calcular_custo_pessoa()}[/] para participar."
+        painel = Panel(conteudo, title=self.titulo, expand=False)
+        print(painel)
 
 # declaração de objetos
 c1 = Churrasco("Churrasco Dia 12", 8)
